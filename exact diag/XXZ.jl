@@ -19,8 +19,8 @@ function E(Δ::Float64)
     state=reshape(psi,d,d,d,d,d,d,d,d,d,d);
     r=ncon([state,state],[[-1,-2, 1,2,3,4,5,6,7,8],[-3,-4,1,2,3,4,5,6,7,8]],[false,true]);
     rho=reshape(r,d^2,d^2);
-    #cnc=max(0,abs(rho[2,3])-sqrt(rho[1,1]*rho[4,4]),abs(rho[1,4])-sqrt())
-    return negativity(rho,[2,2],2)
+    cnc=max(0,abs(rho[2,3])-sqrt(rho[1,1]*rho[4,4]),abs(rho[1,4])-rho[2,2]);
+    return cnc
 end
 
 Δ=range(-2,2,100)
