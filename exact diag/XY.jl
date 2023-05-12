@@ -1,4 +1,4 @@
-using Printf, LinearAlgebra, LinearMaps, Arpack, TensorOperations, QuantumInformation, Plots, Latexify
+using LinearAlgebra, LinearMaps, Arpack, TensorOperations, QuantumInformation, Plots
 
 include("doapplyham.jl");
 
@@ -23,7 +23,7 @@ function E(γ::Float64, λ::Float64)
     return cnc
 end
 
-γ=0.3
+γ=1.0
 λ=range(0,2,100)
 y=E.(γ,λ)
 
