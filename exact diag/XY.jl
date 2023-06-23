@@ -23,7 +23,7 @@ function E(γ::Float64, λ::Float64)
     return cnc
 end
 
-γ=0.3
+γ=0.5
 λ=range(0,2,100)
 y=E.(γ,λ)
 
