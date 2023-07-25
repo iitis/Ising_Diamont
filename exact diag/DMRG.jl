@@ -11,7 +11,7 @@ function ent(N::Int,h::Float64)
   H = MPO(os,sites)
 
   psi0 = randomMPS(sites,10)
-  nsweeps = 10
+  nsweeps = 5
   outputlevel = 0
   maxdim = [10,20,100,100,200]
   cutoff = [1E-10]
