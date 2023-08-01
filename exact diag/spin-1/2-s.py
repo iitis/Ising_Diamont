@@ -5,7 +5,7 @@ from qutip import *
 from ncon import ncon
 import matplotlib.pylab as plt
 
-from toqito.state_props import negativity
+from toqito.state_props import negativity, log_negativity
 
 
 #plt.style.use('seaborn-v0_8-white')
@@ -15,7 +15,7 @@ plt.rcParams.update({
 })
 plt.rcParams['font.weight'] = 'normal'
 plt.rcParams['mathtext.fontset'] = 'stix'
-plt.tick_params(axis='both', which='major', labelsize=20)
+plt.tick_params(axis='both', which='major', labelsize=15)
 
 usePBC = True
 s=1
@@ -40,8 +40,8 @@ def Hamiltonian(h,s,N):
                                     psiIn.reshape(d**k, d, d**(N-1-k)),
                                     axes=[[1], [1]]).transpose(1, 0, 2).reshape(d**N)
         if usePBC:
-            psiOut += np.tensordot(hloc.reshape(d,d),psiIn.reshape(d, d**(N - 1), d),
-                             axes=[[2, 3], [2, 0]]).transpose(1, 2, 0).reshape(d**N)
+            psiOut += np.tensordot(hloc.reshape(d,d),psiIn.reshape(d**(N-1), d),
+                             axes=[[1], [1]]).transpose(1, 0).reshape(d**N)
         return psiOut
 
     def doApplyHamClosed(psiIn):
@@ -49,7 +49,7 @@ def Hamiltonian(h,s,N):
 
     H = LinearOperator(((d0*d1)**N, (d0*d1)**N), matvec=doApplyHamClosed)
     Energy, psi = eigsh(H, k=1, which='SA')
-    return Energy
+    return psi
 
 def QI(h,s,N):
     psi_r=Hamiltonian(h,s,N).reshape(2*d1,d**(N-1))
@@ -57,12 +57,13 @@ def QI(h,s,N):
     #rdm=Qobj(ncon([psi_r,psi_c],((-1,1),(-2,1))))
     rdm=ncon([psi_r,psi_c],((-1,1),(-2,1)))
     #rdm.dims=[[2,d1],[2,d1]]
-    return negativity(rdm,[2,d1]) #
+    return log_negativity(rdm,[2,d1])
 
-# h=np.linspace(0.1,5,50)
-# v=list(map(lambda h:Hamiltonian(h,s,N),h))
+h=np.linspace(0.1,5,100)
 
-# plt.plot(h,v)
-# plt.show()
+v=list(map(lambda h:QI(h,s,N),h))
 
-Hamiltonian(1,1,5)
+plt.plot(h,v)
+plt.show()
+
+#print(Hamiltonian(1,1,5))
