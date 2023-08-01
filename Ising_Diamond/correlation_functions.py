@@ -1,5 +1,8 @@
 import numpy as np
+import numdifftools as nd
+import findiff
 from scipy import *
+import matplotlib.pylab as plt
 
 ## Boltzmann weights according to spin-s (Eq. 51 - Valverde et al 2008)
 def w(s:str, mu:int, beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
@@ -19,9 +22,6 @@ def w(s:str, mu:int, beta:float, J:float, h0:float, Jz:float, h:float, Jm:float,
                                 2*np.exp(-beta*Jz)*np.cosh(beta*2*l))
     return x
     
-
-s='1'; mu=1; beta=1; J=1.0; h0=0.5; Jz=1.0; h=0.3; Jm=0.6; Jp=5.0
-
 ## magnetization <spin-s> (Eq. 30 - Carvalho et al 2019)
 def mag(beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
     s='1/2'
@@ -37,12 +37,22 @@ def sigma_i_sigma_j(beta:float,r:int, J:float, h0:float, Jz:float, h:float, Jm:f
     return sisj
 
 ## Heisenberg spin-spin correlation function in the z direction (Eq. 34 - Carvalho et al 2019)
+
+def wz_mu(mu:int, beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
+    s='1'
+    wz=(1/(2*beta)) * w(s,mu, beta, J, h0, Jz, h, Jm, Jp)
+    df=nd.Derivative(wz,n=1)
+    return df(h)
+
 def Sz(beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
     s='1'
     B=np.sqrt((w(s,1,beta,J,h0,Jz,h,Jm,Jp)-w(s,-1,beta,J,h0,Jz,h,Jm,Jp))**2 + 4*w(s,0,beta,J,h0,Jz,h,Jm,Jp)**2)
     lp=(w(s,1,beta,J,h0,Jz,h,Jm,Jp)+w(s,-1,beta,J,h0,Jz,h,Jm,Jp)+B)/2
     return sz
 
-
-
-#print(sigma_i_sigma_j(s,1,beta,J,h0,Jz,h,Jm,Jp))
+s='1'; mu=1; beta=1; J=1.0; h0=0.5; Jz=1.0; Jm=0.6; Jp=5.0
+h=2
+data=lambda h: w(s,mu,beta,J,h0,Jz,h,Jm,Jp)
+df=nd.Derivative(data,n=1)
+y = df(h)
+print(y/abs(y))
