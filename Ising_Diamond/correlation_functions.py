@@ -1,4 +1,5 @@
 import numpy as np
+import numdifftools as nd
 from scipy import *
 
 ## Boltzmann weights according to spin-s (Eq. 51 - Valverde et al 2008)
@@ -17,10 +18,7 @@ def w(s:str, mu:int, beta:float, J:float, h0:float, Jz:float, h:float, Jm:float,
     elif s=='1':
         x=np.exp(-beta*g)*(np.exp(beta*Jz)+2*np.exp(beta*Jz/2)*np.cosh(beta*np.sqrt(Jz**2 + 2*Jp**2)/2)+4*np.cosh(beta*Jp/2)*np.cosh(beta*l)+
                                 2*np.exp(-beta*Jz)*np.cosh(beta*2*l))
-    return x
-    
-
-s='1'; mu=1; beta=1; J=1.0; h0=0.5; Jz=1.0; h=0.3; Jm=0.6; Jp=5.0
+    return x    
 
 ## magnetization <spin-s> (Eq. 30 - Carvalho et al 2019)
 def mag(beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
@@ -36,13 +34,28 @@ def sigma_i_sigma_j(beta:float,r:int, J:float, h0:float, Jz:float, h:float, Jm:f
     sisj=mag(beta,J,h0,Jz,h,Jm,Jp)**2 + (w(s,0,beta,J,h0,Jz,h,Jm,Jp)/B)**2 * ((w(s,1,beta,J,h0,Jz,h,Jm,Jp)+w(s,-1,beta,J,h0,Jz,h,Jm,Jp)-B)/(w(s,1,beta,J,h0,Jz,h,Jm,Jp)+w(s,-1,beta,J,h0,Jz,h,Jm,Jp)+B))**r
     return sisj
 
-## Heisenberg spin-spin correlation function in the z direction (Eq. 34 - Carvalho et al 2019)
-def Sz(beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
-    s='1'
+# (Eq. 42 - Carvalho et al 2019)
+def wz_mu(s,mu,beta,J,h0,Jz,h,Jm,Jp):
+    wz=lambda h: w(s,mu,beta,J,h0,Jz,h,Jm,Jp)
+    df = nd.Derivative(wz,n=1)
+    y=(1/(2*beta)) * df(h)
+    return y/abs(y).max()
+
+## Heisenberg spin correlation function in the z direction (Eq. 53 - Carvalho et al 2019)
+def Sz(s:str,beta:float, J:float, h0:float, Jz:float, h:float, Jm:float, Jp:float):
     B=np.sqrt((w(s,1,beta,J,h0,Jz,h,Jm,Jp)-w(s,-1,beta,J,h0,Jz,h,Jm,Jp))**2 + 4*w(s,0,beta,J,h0,Jz,h,Jm,Jp)**2)
     lp=(w(s,1,beta,J,h0,Jz,h,Jm,Jp)+w(s,-1,beta,J,h0,Jz,h,Jm,Jp)+B)/2
+    wz_p=wz_mu(s,1,beta,J,h0,Jz,h,Jm,Jp)
+    wz_m=wz_mu(s,-1,beta,J,h0,Jz,h,Jm,Jp)
+    wz_0=wz_mu(s,0,beta,J,h0,Jz,h,Jm,Jp)
+    sz=(wz_p + wz_m)/(2*lp) + ((wz_p - wz_m)*(w(s,1,beta,J,h0,Jz,h,Jm,Jp)-w(s,-1,beta,J,h0,Jz,h,Jm,Jp)))/(2*B*lp) + (2*w(s,0,beta,J,h0,Jz,h,Jm,Jp)*wz_0)/(B*lp)
     return sz
 
 
 
-#print(sigma_i_sigma_j(s,1,beta,J,h0,Jz,h,Jm,Jp))
+
+# s='1/2'; beta=1; J=1.0; h0=0.5; Jz=1.0; Jm=0.6; Jp=5.0
+
+# h=np.linspace(0,10,100)
+# plt.plot(h,wz_mu(s,0,beta,J,h0,Jz,h,Jm,Jp))
+# plt.show()

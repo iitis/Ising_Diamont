@@ -16,9 +16,9 @@ def doApplyHam(psiIn: np.ndarray, hloc: np.ndarray, N: int, usePBC: bool):
                              axes=[[2, 3], [2, 0]]).transpose(1, 2, 0).reshape(d**N)
     return psiOut
 
-model = 'ising'  
-Nsites = 10
-usePBC = True
+model = 'heisenberg'  
+Nsites = 4
+usePBC = False
 numval = 1
 
 d = 2  # local dimension
@@ -31,6 +31,8 @@ if model == 'XX':
     hloc = (np.real(np.kron(sX, sX) + np.kron(sY, sY))).reshape(2, 2, 2, 2)
 elif model == 'ising':
     hloc = (-np.kron(sX, sX) + np.kron(sZ, sI) + np.kron(sI, sZ)).reshape(2, 2, 2, 2)
+elif model == 'heisenberg':
+    hloc = (np.kron(sX, sX) + np.kron(sZ, sZ) + np.kron(sZ**2, sI) + np.kron(sI, sZ**2)).reshape(2, 2, 2, 2)
 
 def doApplyHamClosed(psiIn):
     return doApplyHam(psiIn, hloc, Nsites, usePBC)
@@ -38,18 +40,21 @@ def doApplyHamClosed(psiIn):
 
 H = LinearOperator((2**Nsites, 2**Nsites), matvec=doApplyHamClosed)
 
-start_time = timer()
-Energy, psi = eigsh(H, k=numval, which='SA')
+print(np.array(jmat(3/2,'x')).shape[0])
 
-psi_r=psi.reshape(4,2**(Nsites-2))
-psi_c=np.conj(psi_r)
-rdm=Qobj(ncon([psi_r,psi_c],((-1,1),(-2,1))))
-rdm.dims=[[2,2],[2,2]]
-diag_time = timer() - start_time
+# start_time = timer()
+# Energy, psi = eigsh(H, k=numval, which='SA')
 
-print('N=%d, Time=%f, concurrence=%f ' %(Nsites, diag_time, concurrence(rdm)))
+# print((ket2dm(Qobj(psi))).eigenenergies())
+
+# psi_r=psi.reshape(4,2**(Nsites-2))
+# psi_c=np.conj(psi_r)
+# rdm=Qobj(ncon([psi_r,psi_c],((-1,1),(-2,1))))
+# rdm.dims=[[2,2],[2,2]]
+# diag_time = timer() - start_time
+
+# print('N=%d, Time=%f, concurrence=%f ' %(Nsites, diag_time, concurrence(rdm)))
 
 # rho=ket2dm(Qobj(psi))
 # rho.dims=[[2]*Nsites,[2]*Nsites]
 # print(concurrence(rho.ptrace([0,1])))
-
