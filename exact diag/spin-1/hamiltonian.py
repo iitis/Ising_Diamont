@@ -7,13 +7,12 @@ import numdifftools as nd
 from toqito.state_props import negativity, log_negativity
 
 
-usePBC = True
 s=1
-d0 = 2 
 d1=int(2*s+1)
+usePBC = False
+d0 = 2 
 d=d0*d1*d0
-N=5
-
+N=3
 def Hamiltonian(h,s,N):
 
     # hloc = np.real(np.kron(np.array(sigmax()), np.array(jmat(s,'x')))+np.kron(np.array(sigmay()), np.array(jmat(s,'y')))+
