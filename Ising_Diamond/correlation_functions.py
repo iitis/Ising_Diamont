@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import *
 import matplotlib.pylab as plt
-
+import numdifftools as nd
 
 def l(J,si,sj,h):
     return J*(si+sj)+h
@@ -11,7 +11,7 @@ def g(J,si,sj,h0):
 ## Boltzmann weights according to spin-s (Eq. 51 - Valverde et al 2008)
 def w(s:str, si, sj, beta, J:float, h0:float, Jz:float, h:float, Jp:float):
     if s=='1/2':
-        x=2*np.exp(-beta*(g(J,si,sj,h0) + Jz/4))*np.cosh(beta*np.sqrt(16*l(J,si,sj,h)**2)/4) + 2*np.exp(-beta*(g(J,si,sj,h0) - Jz/4))*np.cosh(beta*Jp/4)
+        x=2*np.exp(-beta*(g(J,si,sj,h0) + Jz/4))*np.cosh(beta*np.sqrt((16*l(J,si,sj,h)**2))/4) + 2*np.exp(-beta*(g(J,si,sj,h0) - Jz/4))*np.cosh(beta*Jp/4)
     elif s=='1':
         x=np.exp(-beta*g(J,si,sj,h0))*(np.exp(beta*Jz)+2*np.exp(beta*Jz/2)*np.cosh(beta*np.sqrt(Jz**2 + 2*Jp**2)/2)+4*np.cosh(beta*Jp/2)*np.cosh(beta*l(J,si,sj,h))+
                                 2*np.exp(-beta*Jz)*np.cosh(beta*2*l(J,si,sj,h)))
@@ -38,6 +38,12 @@ def sigma_i_sigma_j(s:str,beta:float,r:int, J:float, h0:float, Jz:float, h:float
 
 def w_z(s:str, si, sj, beta, J:float, h0:float, Jz:float, h:float, Jp:float):
     dw=(w(s,si,sj,beta,J,h0,Jz,h+0.0001,Jp)-w(s,si,sj,beta,J,h0,Jz,h,Jp))/0.0001
+    # dw=lambda h: w(s,si,sj,beta,J,h0,Jz,h,Jp)
+    # y=dw(h)
+    # # if (abs(y).max()) == 0.:
+    # #     dw_h=y/1e-4
+    # # else:
+    # #     dw_h=y/(abs(y).max())
     return (1/(2*beta))*dw
 
 def Sz(s:str,beta:float, J:float, h0:float, Jz:float, h:float,  Jp:float):
@@ -72,6 +78,11 @@ def Szsj(s:str,beta:float,r:int, J:float, h0:float, Jz:float, h:float,  Jp:float
     return szsj
 
 def SxSx(s:str,beta:float, J:float, h0:float, Jz:float, h:float,  Jp:float):
-    dF=(F(s,beta,J,h0,Jz,h,Jp+0.0001)-F(s,beta,J,h0,Jz,h,Jp))/0.0001
-    return dF
-  
+    #dF=(F(s,beta,J,h0,Jz,h,Jp+0.0001)-F(s,beta,J,h0,Jz,h,Jp))/0.0001
+    df= nd.Derivative(lambda Jp: F(s,beta,J,h0,Jz,h,Jp),n=1)
+    y=df(Jp)
+    if (abs(y).max()) == 0.:
+        df_Jp=y/1e-4
+    else:
+        df_Jp=y/(abs(y).max())
+    return df_Jp

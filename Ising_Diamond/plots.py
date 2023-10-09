@@ -11,24 +11,24 @@ plt.rcParams['mathtext.fontset'] = 'stix'
 plt.tick_params(axis='both', which='major', labelsize=20)
 
 #parameters  for the (1/2,1/2) model
-#s='1/2'; beta=np.float128(200); h0=h=1e-4
-# x = np.linspace(0.,3*np.pi/2,200)
-# y = np.linspace(0., 2*np.pi,200)
-# X, Y = np.meshgrid(x, y)
-# J=-np.sin(X)
-# Jz=-np.sin(Y)
-# Jp=4*np.cos(Y)
-
-#parameters for the (1/2,1) model
-s='1'; beta=np.float128(200); h0=h=1e-4
-x = np.linspace(1.7,4.5,100)
-y = np.linspace(1.7, 4.5,100)
+s='1/2'; beta=np.float128(3e2); h0=h=1e-4
+x = np.linspace(0.01,3*np.pi/2,20)
+y = np.linspace(0.01, 2*np.pi,20)
 X, Y = np.meshgrid(x, y)
-J=Jz=np.sin(X)
-Jp=4*np.sin(Y)
+J=-np.sin(X)
+Jz=-np.sin(Y)
+Jp=4*np.cos(Y)
+t=np.pi/3; f=np.pi
+#parameters for the (1/2,1) model
+# s='1'; beta=np.float128(300); h0=h=1e-4
+# x = np.linspace(1.7,4.7,100)
+# y = np.linspace(1.7, 4.7,100)
+# X, Y = np.meshgrid(x, y)
+# J=Jz=np.sin(X)
+# Jp=4*np.sin(Y)
 
 cmap = 'viridis'
-W=np.vectorize(SxSx)
+W=np.vectorize(neg)
 plt.contourf(X, Y, W(s,beta,J,h0,Jz,h,Jp), 100, cmap=cmap)
 cb=plt.colorbar()
 cb.ax.tick_params(labelsize=20)
