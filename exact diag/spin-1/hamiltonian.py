@@ -4,17 +4,19 @@ from timeit import default_timer as timer
 from qutip import *
 from ncon import ncon
 import numdifftools as nd
-from toqito.state_props import negativity, log_negativity
+from toqito.state_props import negativity, log_negativity, l1_norm_coherence
+from os import environ
+N_THREADS = '20'
+environ['OMP_NUM_THREADS'] = N_THREADS
+environ['OPENBLAS_NUM_THREADS'] = N_THREADS
+environ['MKL_NUM_THREADS'] = N_THREADS
+environ['VECLIB_MAXIMUM_THREADS'] = N_THREADS
+environ['NUMEXPR_NUM_THREADS'] = N_THREADS
 
-
-s=1
-d1=int(2*s+1)
-usePBC = False
-d0 = 2 
-d=d0*d1*d0
-N=3
 def Hamiltonian(h,s,N):
-
+    usePBC = True
+    d1=int(2*s + 1)
+    d0=2
     # hloc = np.real(np.kron(np.array(sigmax()), np.array(jmat(s,'x')))+np.kron(np.array(sigmay()), np.array(jmat(s,'y')))+
     #                np.kron(np.array(sigmaz()), np.array(jmat(s,'z')))- h * (np.kron(np.array(sigmaz()), np.array(qeye(d1)))+
     #                                                                         np.kron(np.array(qeye(3)), np.array(jmat(s,'z'))))).reshape(2, d1, 2, d1)

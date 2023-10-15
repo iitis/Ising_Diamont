@@ -77,7 +77,7 @@ def Szsj(s:str,beta:float,r:int, J:float, h0:float, Jz:float, h:float,  Jp:float
     szsj=Sz(s,beta,J,h0,Jz,h,Jp)*mag(s,beta,J,h0,Jz,h,Jp) - (w0_tilda*w(s,1/2,-1/2,beta,J,h0,Jz,h,Jp)*u**r)/(B*lm)
     return szsj
 
-def SxSx(s:str,beta:float, J:float, h0:float, Jz:float, h:float,  Jp:float):
+def SxSx(s,beta,J,h0,Jz,h,Jp):
     #dF=(F(s,beta,J,h0,Jz,h,Jp+0.0001)-F(s,beta,J,h0,Jz,h,Jp))/0.0001
     df= nd.Derivative(lambda Jp: F(s,beta,J,h0,Jz,h,Jp),n=1)
     y=df(Jp)

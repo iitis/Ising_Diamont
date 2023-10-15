@@ -2,6 +2,10 @@ from hamiltonian import *
 from Wigner import *
 import matplotlib.pylab as plt
 
+import multiprocessing
+from functools import partial
+import progressbar
+
 #plt.style.use('seaborn-v0_8-white')
 plt.rcParams.update({
     "font.family": "serif",
@@ -11,26 +15,32 @@ plt.rcParams['font.weight'] = 'normal'
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.tick_params(axis='both', which='major', labelsize=20)
 
-t1=t2=np.linspace(0,np.pi/2,30)
-f1=f2=np.linspace(0,np.pi,30)
-usePBC = True
 
+t1=t2=np.linspace(0,np.pi,20)
+f1=f2=np.linspace(0,2*np.pi,20)
 s=1
-d0 = 2 
+N=4
+h=np.linspace(0.0,6,100)
+#w=list(map(lambda h: sum(list(map(lambda t1: sum(list(map(lambda f1 : wigner(t1,t1,f1,f1,h,s,N)*(1/np.pi)*np.sin(2*t1),f1))),t1))),h))
+#np.savez('data_neg_s=%s_N=%s'%(s,N),w)
 
-d=d0*d1*d0
-N=3
+w=list(map(lambda h:state(h,s,N),h))
 
-h=np.linspace(0,10,50)
-#v=list(map(lambda h:Hamiltonian(h,s,N),h))
-b=[]
-for x in h:
-    v=list(map(lambda t1,f1 : wigner(t1,t1,f1,f1,x,s,N),t1,f1))
-    b+=[abs(sum(c for c in v if c<0))]
-# print(b)
-# print(len(b))
-# v=lambda h:QI(h,s,N)
-# dv=nd.Derivative(v)
-# df=dv(h)
-plt.plot(h,b)
+plt.plot(h,w)
+plt.savefig("neg_ent.pdf")
 plt.show()
+# for x in s:
+#     data=list(map(lambda h:EoF(h,x,N),h))
+#     np.savez("EoF_s=%s_N=%s"%(x,N),data)
+
+#data1=np.load("/home/zakaria/TN_QMS/data.npz")
+#plt.plot(h,data1['arr_0'],label=r'$\frac{1}{2}-1$')
+
+# plt.plot(h,data,label=r'$\frac{1}{2}-1$')
+# plt.xlabel(r'$h$',fontsize=20)
+# #plt.ylabel(r'$\mathcal{N}_W$',fontsize=20)
+# plt.ylabel(r'EoF',fontsize=20)
+# plt.legend(fontsize=20)
+# plt.tight_layout()
+# plt.savefig('data_neg_s=%s_N=%s.pdf'%(s,N))
+# plt.show()
