@@ -4,7 +4,8 @@ from qutip import *
 from toqito.state_props import l1_norm_coherence, negativity, log_negativity
 from toqito.state_props import concurrence as cnc
 
-def rho(s:str,beta:float, J:float, h0:float, Jz:float, h:float, Jp:float):
+def rho(args):
+    s,beta,J,h0,Jz,h,Jp = args
     if s=='1/2':
         d=2
         sz=sigmaz()
@@ -43,11 +44,11 @@ def rho_2(s:str,beta:float, J:float, h0:float, Jz:float, h:float, Jp:float):
 def wigner(t:float, f:float, s:str,beta:float, J:float, h0:float, Jz:float, h:float, Jp:float):
     pi_1=qeye(2) - np.sqrt(3) * sigmaz()
     U_1=((1j*sigmaz()*f).expm())*((1j*sigmay()*t).expm())
-    A_1=U_1*pi_1*(U_1.dag())
+    A_1=(U_1*pi_1*(U_1.dag()))/2
 
     pi_2=qeye(3)-2*Qobj([[1,0,0],[0,1,0],[0,0,-2]])
     U_2=((1j*jmat(1,'z')*f).expm())*((1j*jmat(1,'y')*t).expm())
-    A_2=U_2*pi_2*(U_2.dag())
+    A_2=(U_2*pi_2*(U_2.dag()))/3
 
     if s=='1/2':
         wig=np.real((rho(s,beta,J,h0,Jz,h,Jp)*tensor(A_1,A_1,A_1,A_1)).tr())
@@ -55,8 +56,10 @@ def wigner(t:float, f:float, s:str,beta:float, J:float, h0:float, Jz:float, h:fl
         wig=np.real((rho(s,beta,J,h0,Jz,h,Jp)*tensor(A_1,A_2,A_2,A_1)).tr())
     return wig
 
-def neg(s,beta,J,h0,Jz,h,Jp):
+def neg(args):
+    s,beta,J,h0,Jz,h,Jp = args
     t=np.linspace(0,np.pi/2,20)
     f=np.linspace(0,2*np.pi,20)
-    n=list(sum(list(map(lambda t: sum(list(map(lambda f : np.abs(wigner(t,f,s,beta,J,h0,Jz,h,Jp))*(1/np.pi)*np.sin(2*t),f))),t))))
+    n=np.sum(list(map(lambda t: np.sum(list(map(lambda f : np.abs(wigner(t,f,s,beta,J,h0,Jz,h,Jp))*(1/np.pi)*np.sin(2*t),f))),t))) - 1.
     return n
+
