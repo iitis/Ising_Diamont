@@ -92,8 +92,10 @@ def lbc_3_sites(args):
         eigen123=(state*(s123*state.conj()*s123)).eigenenergies(sort='high')
         eigen132=((state.permute([0,2,1]))*(s123*(state.permute([0,2,1])).conj()*s123)).eigenenergies(sort='high')
         eigen231=((state.permute([1,2,0]))*(s123*(state.permute([1,2,0])).conj()*s123)).eigenenergies(sort='high')
-        c123+=max(0,np.sqrt(eigen123[0])-np.sqrt(eigen123[1])-np.sqrt(eigen123[2])-np.sqrt(eigen123[3]))
-        c132+=max(0,np.sqrt(eigen132[0])-np.sqrt(eigen132[1])-np.sqrt(eigen132[2])-np.sqrt(eigen132[3]))
-        c231+=max(0,np.sqrt(eigen231[0])-np.sqrt(eigen231[1])-np.sqrt(eigen231[2])-np.sqrt(eigen231[3]))
-    lbc = (c123)**2 + (c132)**2 + (c231)**2
-    return lbc
+        c123.append(max(0,np.sqrt(eigen123[0])-np.sqrt(eigen123[1])-np.sqrt(eigen123[2])-np.sqrt(eigen123[3]))**2)
+        c132.append(max(0,np.sqrt(eigen132[0])-np.sqrt(eigen132[1])-np.sqrt(eigen132[2])-np.sqrt(eigen132[3]))**2)
+        c231.append(max(0,np.sqrt(eigen231[0])-np.sqrt(eigen231[1])-np.sqrt(eigen231[2])-np.sqrt(eigen231[3]))**2)
+    lbc = c123 + c132+ c231
+    return sum(lbc)
+args=['1/2',300,1,1e-4,1,1e-4,1]
+print(lbc_3_sites(args))
