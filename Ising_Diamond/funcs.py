@@ -85,7 +85,7 @@ def so(n):
 def lbc_3_sites(args):
     s,beta,J,h0,Jz,h,Jp=args
     c123=[]; c132=[]; c231=[]
-    state=rho(s,beta,J,h0,Jz,h,Jp).ptrace([0,1,2])
+    state=rho(s,beta,J,h0,Jz,h,Jp).ptrace([1,2,3])
     for gen in so(4):
         s123=tensor(gen,so(2)[0])
         s123.dims=[[2,2,2],[2,2,2]]
@@ -97,5 +97,31 @@ def lbc_3_sites(args):
         c231.append(max(0,np.sqrt(eigen231[0])-np.sqrt(eigen231[1])-np.sqrt(eigen231[2])-np.sqrt(eigen231[3]))**2)
     lbc = c123 + c132+ c231
     return sum(lbc)
-args=['1/2',300,1,1e-4,1,1e-4,1]
-print(lbc_3_sites(args))
+
+def lbc_4_sites(args):
+    s,beta,J,h0,Jz,h,Jp=args
+    c1_234=[]; c2_134=[]; c3_124=[]; c4_123=[]
+    c12_34=[]; c13_24=[]; c14_23=[]
+    state=rho(s,beta,J,h0,Jz,h,Jp)
+    for gen in so(8):
+        s1_p=tensor(so(2)[0],gen)
+        s1_p.dims=[[2,2,2,2],[2,2,2,2]]
+        eigen1_234=(state*(s1_p*state.conj()*s1_p)).eigenenergies(sort='high')
+        eigen2_134=((state.permute([1,0,2,3]))*(s1_p*(state.permute([1,0,2,3])).conj()*s1_p)).eigenenergies(sort='high')
+        eigen3_124=((state.permute([2,0,1,3]))*(s1_p*(state.permute([2,0,1,3])).conj()*s1_p)).eigenenergies(sort='high')
+        eigen4_123=((state.permute([3,0,1,2]))*(s1_p*(state.permute([3,0,1,2])).conj()*s1_p)).eigenenergies(sort='high')
+        c1_234.append(max(0,np.sqrt(eigen1_234[0])-np.sqrt(eigen1_234[1])-np.sqrt(eigen1_234[2])-np.sqrt(eigen1_234[3]))**2)
+        c2_134.append(max(0,np.sqrt(eigen2_134[0])-np.sqrt(eigen2_134[1])-np.sqrt(eigen2_134[2])-np.sqrt(eigen2_134[3]))**2)
+        c3_124.append(max(0,np.sqrt(eigen3_124[0])-np.sqrt(eigen3_124[1])-np.sqrt(eigen3_124[2])-np.sqrt(eigen3_124[3]))**2)
+        c4_123.append(max(0,np.sqrt(eigen4_123[0])-np.sqrt(eigen4_123[1])-np.sqrt(eigen4_123[2])-np.sqrt(eigen4_123[3]))**2)
+    for gen in so(4):
+        Sij_kl=tensor(so(4)[0],so(4)[0])
+        Sij_kl.dims=[[2,2,2,2],[2,2,2,2]]
+        eigen12_34=(state*(Sij_kl*state.conj()*Sij_kl)).eigenenergies(sort='high')
+        eigen13_24=((state.permute([0,2,1,3]))*(Sij_kl*(state.permute([0,2,1,3])).conj()*Sij_kl)).eigenenergies(sort='high')
+        eigen14_23=((state.permute([0,3,1,2]))*(Sij_kl*(state.permute([0,3,1,2])).conj()*Sij_kl)).eigenenergies(sort='high')
+        c12_34.append(max(0,np.sqrt(eigen12_34[0])-np.sqrt(eigen12_34[1])-np.sqrt(eigen12_34[2])-np.sqrt(eigen12_34[3]))**2)
+        c13_24.append(max(0,np.sqrt(eigen13_24[0])-np.sqrt(eigen13_24[1])-np.sqrt(eigen13_24[2])-np.sqrt(eigen13_24[3]))**2)
+        c14_23.append(max(0,np.sqrt(eigen14_23[0])-np.sqrt(eigen14_23[1])-np.sqrt(eigen14_23[2])-np.sqrt(eigen14_23[3]))**2)
+    lbc = sum(c1_234 + c2_134 + c3_124 + c4_123 + c12_34 + c13_24 + c14_23 + c12_34 + c13_24 + c14_23)
+    return lbc
