@@ -95,8 +95,8 @@ def lbc_3_sites(args):
         c123.append(max(0,np.sqrt(eigen123[0])-np.sqrt(eigen123[1])-np.sqrt(eigen123[2])-np.sqrt(eigen123[3]))**2)
         c132.append(max(0,np.sqrt(eigen132[0])-np.sqrt(eigen132[1])-np.sqrt(eigen132[2])-np.sqrt(eigen132[3]))**2)
         c231.append(max(0,np.sqrt(eigen231[0])-np.sqrt(eigen231[1])-np.sqrt(eigen231[2])-np.sqrt(eigen231[3]))**2)
-    lbc = c123 + c132+ c231
-    return sum(lbc)
+    lbc = sum(c123) + sum(c132)+ sum(c231)
+    return lbc
 
 def lbc_4_sites(args):
     s,beta,J,h0,Jz,h,Jp=args
@@ -123,5 +123,5 @@ def lbc_4_sites(args):
         c12_34.append(max(0,np.sqrt(eigen12_34[0])-np.sqrt(eigen12_34[1])-np.sqrt(eigen12_34[2])-np.sqrt(eigen12_34[3]))**2)
         c13_24.append(max(0,np.sqrt(eigen13_24[0])-np.sqrt(eigen13_24[1])-np.sqrt(eigen13_24[2])-np.sqrt(eigen13_24[3]))**2)
         c14_23.append(max(0,np.sqrt(eigen14_23[0])-np.sqrt(eigen14_23[1])-np.sqrt(eigen14_23[2])-np.sqrt(eigen14_23[3]))**2)
-    lbc = sum(c1_234 + c2_134 + c3_124 + c4_123 + c12_34 + c13_24 + c14_23 + c12_34 + c13_24 + c14_23)
+    lbc = sum(c1_234) + sum(c2_134) + sum(c3_124) + sum(c4_123) + sum(c12_34) + sum(c13_24) + sum(c14_23) + sum(c12_34) + sum(c13_24) + sum(c14_23)
     return lbc
