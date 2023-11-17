@@ -75,10 +75,10 @@ def so(n):
     """
     generators = []
     for i in range(n):
-        for j in range(i + 1, n):
-            generator = np.zeros((n, n))
-            generator[i, j] = -1
-            generator[j, i] = 1
+        for k in range(i + 1, n):
+            generator = np.zeros((n, n),dtype=complex)
+            generator[i, k] = -1j
+            generator[k, i] = 1j
             generators.append(Qobj(generator))
     return generators
 
