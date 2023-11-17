@@ -83,6 +83,20 @@ def so(n):
     return generators
 
 def lbc_3_sites(args):
+    """
+    Compute the lower bound concurrence for a system of three qubits as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
+    
+    Parameters:
+    s (string): spin half or one
+    beta (float): inverse temperature
+    J (float): coupling between Ising nodes
+    h0, h (float): magnetic field
+    Jz (float): coupling between Heisenberg nodes in the z-direction
+    Jp (float): coupling between Heisenberg nodes in the x- and y-direction; Jp=Jx+Jy
+
+    Returns:
+    float: value of the lower bound concurrence
+    """
     s,beta,J,h0,Jz,h,Jp=args
     c123=[]; c132=[]; c231=[]
     state=rho(s,beta,J,h0,Jz,h,Jp).ptrace([0,1,2])
@@ -99,6 +113,20 @@ def lbc_3_sites(args):
     return np.sqrt(lbc)
 
 def lbc_4_sites(args):
+    """
+    Compute the lower bound concurrence for a system of four qubits as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
+    
+    Parameters:
+    s (string): spin half or one
+    beta (float): inverse temperature
+    J (float): coupling between Ising nodes
+    h0, h (float): magnetic field
+    Jz (float): coupling between Heisenberg nodes in the z-direction
+    Jp (float): coupling between Heisenberg nodes in the x- and y-direction; Jp=Jx+Jy
+
+    Returns:
+    float: value of the lower bound concurrence
+    """
     s,beta,J,h0,Jz,h,Jp=args
     c1_234=[]; c2_134=[]; c3_124=[]; c4_123=[]
     c12_34=[]; c13_24=[]; c14_23=[]
