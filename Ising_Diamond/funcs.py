@@ -4,7 +4,7 @@ from qutip import *
 from toqito.state_props import l1_norm_coherence, negativity, log_negativity
 from toqito.state_props import concurrence as cnc
 import statistics
-from scipy import signal
+from scipy.ndimage import gaussian_filter
 from scipy.stats import entropy
 from scipy.stats import ortho_group
 
@@ -46,8 +46,7 @@ def rho_2(s:str,beta:float, J:float, h0:float, Jz:float, h:float, Jp:float):
     return 2*max(0,abs(ux)-np.sqrt(up*um),-uw)
 
 def wigner(t, f, s, beta, J, h0, Jz, h, Jp):
-    #t, f, s, beta, J, h0, Jz, h, Jp = args
-    
+    #= args
     pi_1=qeye(2) - np.sqrt(3) * sigmaz(); U_1=((1j*sigmaz()*f).expm())*((1j*sigmay()*t).expm()); A_1=(U_1*pi_1*U_1.dag())/2
     pi_2=qeye(3)-2*Qobj([[1,0,0],[0,1,0],[0,0,-2]]); U_2=((1j*jmat(1,'z')*f).expm())*((1j*jmat(1,'y')*t).expm()); A_2=(U_2*pi_2*U_2.dag())/3
 
@@ -57,10 +56,19 @@ def wigner(t, f, s, beta, J, h0, Jz, h, Jp):
         wig=np.real((rho(s,beta,J,h0,Jz,h,Jp)*tensor(A_1,A_2,A_2,A_1)).tr())
     return wig
 
+
 def neg(args):
     s, beta, J, h0, Jz, h, Jp = args
     t=np.linspace(0,np.pi/2,50); f=np.linspace(0,2*np.pi,50)
     return np.sum(list(map(lambda t: np.sum(list(map(lambda f : (np.abs(wigner(t, f, s, beta, J, h0, Jz, h, Jp))-wigner(t, f, s, beta, J, h0, Jz, h, Jp))*(1/np.pi)*np.sin(2*t),f))),t)))
+
+def wigner_entropy(args):
+    s, beta, J, h0, Jz, h, Jp = args
+    t=np.linspace(0,np.pi/2,50); f=np.linspace(0,2*np.pi,50)
+    data=list(map(lambda t,f: wigner(t,f,s, beta, J, h0, Jz, h, Jp),t,f))
+    sigma=15
+    wigner_smoothed = gaussian_filter(data, sigma)
+    return entropy(wigner_smoothed,base=2)
 
 def so(n):
     """
