@@ -165,7 +165,7 @@ def lbc_4_qubits(args):
 
 def lbc_3_mixed(args):
     """
-    Compute the lower bound concurrence for a system of three qubits as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
+    Compute the lower bound concurrence for a system of (1/2,1,1/2) spin as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
     
     Parameters:
     s (string): spin half or one
@@ -199,7 +199,7 @@ def lbc_3_mixed(args):
 
 def lbc_4_mixed(args):
     """
-    Compute the lower bound concurrence for a system of four qubits as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
+    Compute the lower bound concurrence for a system of (1/2,1,1,1/2) spin  as described by Ming Li et al 2009 J. Phys. A: Math. Theor. 42 145303
     
     Parameters:
     s (string): spin half or one
