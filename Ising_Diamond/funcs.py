@@ -220,13 +220,14 @@ def lbc_4_mixed(args):
         s1_p=tensor(so(2)[0],gen1)
         s1_p.dims=[[2,3,3,2],[2,3,3,2]]
         eigen1_234=(state*(s1_p*state.conj()*s1_p)).eigenenergies(sort='high')
+        s1_p.dims=[[2,2,3,3],[2,2,3,3]]
         eigen4_123=((state.permute([3,0,1,2]))*(s1_p*(state.permute([3,0,1,2])).conj()*s1_p)).eigenenergies(sort='high')
         c1_234.append(max(0,np.sqrt(eigen1_234[0])-np.sqrt(eigen1_234[1])-np.sqrt(eigen1_234[2])-np.sqrt(eigen1_234[3]))**2)
         c4_123.append(max(0,np.sqrt(eigen4_123[0])-np.sqrt(eigen4_123[1])-np.sqrt(eigen4_123[2])-np.sqrt(eigen4_123[3]))**2)
     for gen2 in so(3):
         for gen3 in so(12):
             s2_p=tensor(gen2,gen3)
-            s2_p.dims=[[2,3,3,2],[2,3,3,2]]
+            s2_p.dims=[[3,2,3,2],[3,2,3,2]]
             eigen2_134=((state.permute([1,0,2,3]))*(s2_p*(state.permute([1,0,2,3])).conj()*s2_p)).eigenenergies(sort='high')    
             eigen3_124=((state.permute([2,0,1,3]))*(s2_p*(state.permute([2,0,1,3])).conj()*s2_p)).eigenenergies(sort='high')    
             c2_134.append(max(0,np.sqrt(eigen2_134[0])-np.sqrt(eigen2_134[1])-np.sqrt(eigen2_134[2])-np.sqrt(eigen2_134[3]))**2)
@@ -242,11 +243,11 @@ def lbc_4_mixed(args):
     for gen6 in so(4):
         for gen7 in so(9):
             s14_23=tensor(gen6,gen7)
-            s14_23.dims=[[2,3,3,2],[2,3,3,2]]
+            s14_23.dims=[[2,2,3,3],[2,2,3,3]]
             eigen14_23=((state.permute([0,3,1,2]))*(s14_23*(state.permute([0,3,1,2])).conj()*s14_23)).eigenenergies(sort='high')
             c14_23.append(max(0,np.sqrt(eigen14_23[0])-np.sqrt(eigen14_23[1])-np.sqrt(eigen14_23[2])-np.sqrt(eigen14_23[3]))**2)
     lbc = (sum(c1_234) + sum(c2_134) + sum(c3_124) + sum(c4_123) + sum(c12_34) + sum(c13_24) + sum(c14_23) + sum(c12_34) + sum(c13_24) + sum(c14_23))/7
     return np.sqrt(lbc)
 
-args=['1/2',300,1,1e-4,1,1e-4,1]
-print(lbc_4_mixed(args))
+# args=['1',100,1,1e-4,1,1e-4,1]
+# print(lbc_4_mixed(args))
