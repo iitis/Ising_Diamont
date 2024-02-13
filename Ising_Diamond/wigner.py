@@ -62,16 +62,3 @@ def neg(args):
     s, beta, J, h0, Jz, h, Jp = args
     t=np.linspace(0,np.pi/2,50); f=np.linspace(0,2*np.pi,50)
     return np.sum(list(map(lambda t: np.sum(list(map(lambda f : (np.abs(wigner(t, f, s, beta, J, h0, Jz, h, Jp))-wigner(t, f, s, beta, J, h0, Jz, h, Jp))*(1/np.pi)*np.sin(2*t),f))),t)))
-
-
-
-## work in progress - Wigner entropy
-def gaussian(t,f):
-    sigma=1
-    g = (1/np.pi) * np.exp(-t**2/(2*(sigma**2)) - 2*(f**2)*(sigma**2))
-    return g
-def wigner_entropy(args):
-    t, f, s, beta, J, h0, Jz, h, Jp = args
-    #T,F=np.meshgrid(t,f)
-    convolution = signal.convolve(wigner(t,f, s, beta, J, h0, Jz, h, Jp),gaussian(t,f))
-    return entropy(convolution)

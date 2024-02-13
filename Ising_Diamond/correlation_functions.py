@@ -6,7 +6,7 @@ import numdifftools as nd
 def l(J,si,sj,h):
     return J*(si+sj)+h
 def g(J,si,sj,h0):
-    return J*si*sj+(h0/2)*(si+sj)
+    return  J*si*sj+(h0/2)*(si+sj)
 
 ## Boltzmann weights according to spin-s (Eq. 51 - Valverde et al 2008)
 def w(s:str, si, sj, beta, J:float, h0:float, Jz:float, h:float, Jp:float):
